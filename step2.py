@@ -5,43 +5,58 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 import string
 
+# Κατέβασμα απαραίτητων πόρων
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-text = ["hello", "kbeiei", "world"]
+# Συνάρτηση για επεξεργασία κειμένου
 def process_content(text):
-    #Tokenization
-    words = word_tokenize(str(text))
+    if not isinstance(text, str):  # Έλεγχος ότι η είσοδος είναι string
+        return text
+    
+    # Tokenization
+    words = word_tokenize(text)
     processed_words = []
-
+    
     for word in words:
-        if word.isdigit():
-            processed_words.append(str(word))
+        if word.isdigit():  # Αν είναι αριθμός, το προσθέτουμε απευθείας
+            processed_words.append(word)
         else:
-            #Removing special characters
+            # Αφαίρεση ειδικών χαρακτήρων
             word = word.strip(string.punctuation)
+            
+            # Lemmatization
             lemmatizer = WordNetLemmatizer()
             word = lemmatizer.lemmatize(word)
-
-            #remove stop words(σβήνω λέξεις χωρίς νόημα)
+            
+            # Αφαίρεση stop words
             stop_words = set(stopwords.words('english'))
             if word.lower() not in stop_words:
                 processed_words.append(word.lower())
-
+    
     return ' '.join(processed_words)
 
-#process_content(text)
+# Ανάγνωση δεδομένων από αρχείο JSON
+try:
+    dataframe = pd.read_json("articles.json")  # Σωστή διαδρομή αρχείου
+except Exception as e:
+    print(f"Error reading JSON file: {e}")
+    exit()
 
-dataframe = pd.read_json(r'(\"articles.json\")')
-
+# Επεξεργασία δεδομένων DataFrame
 for column in dataframe.columns:
     dataframe[column] = dataframe[column].apply(process_content)
 
-new_columns = {0: 'Title', 1: 'Url', 2: 'Content'}
+# Μετονομασία στηλών
+new_columns = {
+    dataframe.columns[0]: 'Title',
+    dataframe.columns[1]: 'Url',
+    dataframe.columns[2]: 'Content'
+}
+dataframe = dataframe.rename(columns=new_columns)
 
-dataframe = dataframe.rename(columns = new_columns)
+# Αποθήκευση επεξεργασμένων δεδομένων σε νέο αρχείο JSON
+dataframe.to_json("processed.json", orient='records', indent=4)
 
-dataframe.to_json('processed.json', orient = 'records', lines = True)
-
-print("Process complete")
+print("Process complete. Processed data saved to 'processed.json'.")

@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 import string
 
-# Κατέβασμα απαραίτητων πόρων
+
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -39,7 +39,7 @@ def process_content(text):
 
 # Ανάγνωση δεδομένων από αρχείο JSON
 try:
-    dataframe = pd.read_json("articles.json")  # Σωστή διαδρομή αρχείου
+    dataframe = pd.read_json("articles.json")  # διαδρομή αρχείου
 except Exception as e:
     print(f"Error reading JSON file: {e}")
     exit()

@@ -59,4 +59,4 @@ dataframe = dataframe.rename(columns=new_columns)
 # Αποθήκευση επεξεργασμένων δεδομένων σε νέο αρχείο JSON
 dataframe.to_json("processed.json", orient='records', indent=4)
 
-print("Process complete. Processed data saved to 'processed.json'.")
+print("The data has been saved to \"processed.json\"")

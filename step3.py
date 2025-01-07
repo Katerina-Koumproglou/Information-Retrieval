@@ -24,6 +24,6 @@ with open('inverted_index.json', 'w') as json_file:
     json.dump(inverted_index, json_file, indent=4)  # Προσθέτουμε το indent για καλύτερη αναγνωσιμότητα
 
 # Δοκιμαστική εκτύπωση μερικών όρων
-print("The inverted index has been saved with horizontal layout:")
+print("The inverted index has been saved:")
 for term, occurrences in list(inverted_index.items())[:10]:
     print(f"{term}: {occurrences}")

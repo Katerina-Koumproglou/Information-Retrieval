@@ -10,9 +10,8 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-# Συνάρτηση για επεξεργασία κειμένου
 def process_content(text):
-    if not isinstance(text, str):  # Έλεγχος ότι η είσοδος είναι string
+    if not isinstance(text, str):
         return text
     
     # Tokenization
@@ -20,7 +19,7 @@ def process_content(text):
     processed_words = []
     
     for word in words:
-        if word.isdigit():  # Αν είναι αριθμός, το προσθέτουμε απευθείας
+        if word.isdigit():
             processed_words.append(word)
         else:
             # Αφαίρεση ειδικών χαρακτήρων
@@ -37,18 +36,15 @@ def process_content(text):
     
     return ' '.join(processed_words)
 
-# Ανάγνωση δεδομένων από αρχείο JSON
 try:
-    dataframe = pd.read_json("articles.json")  # διαδρομή αρχείου
+    dataframe = pd.read_json("articles.json")
 except Exception as e:
     print(f"Error reading JSON file: {e}")
     exit()
 
-# Επεξεργασία δεδομένων DataFrame
 for column in dataframe.columns:
     dataframe[column] = dataframe[column].apply(process_content)
 
-# Μετονομασία στηλών
 new_columns = {
     dataframe.columns[0]: 'Title',
     dataframe.columns[1]: 'Url',
@@ -56,7 +52,6 @@ new_columns = {
 }
 dataframe = dataframe.rename(columns=new_columns)
 
-# Αποθήκευση επεξεργασμένων δεδομένων σε νέο αρχείο JSON
 dataframe.to_json("processed.json", orient='records', indent=4)
 
 print("The data has been saved to \"processed.json\"")

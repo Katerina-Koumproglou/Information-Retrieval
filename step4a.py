@@ -10,18 +10,16 @@ def boolean_search(query, inverted_index):
     # Διαχωρισμός όρων και τελεστών
     terms = query.lower().split()  # Διαχωρισμός βάσει κενού
     if not terms:
-        return set()  # Επιστρέφει άδειο σύνολο αν το ερώτημα είναι κενό
+        return None, "Το ερώτημα είναι κενό."  # Επιστρέφει None αν το ερώτημα είναι κενό
+
+    if len(terms) % 2 == 0:  # Έλεγχος για ελλιπές ερώτημα (πρέπει να έχει περιττό αριθμό όρων/τελεστών)
+        return None, f"Λάθος: Λείπει όρος μετά τον τελεστή '{terms[-1]}'."
 
     result_set = set(inverted_index.get(terms[0], []))  # Ξεκινάμε με τον πρώτο όρο
     
     i = 1
     while i < len(terms):
         operator = terms[i]  # AND, OR, NOT
-        
-        # Επαλήθευση αν υπάρχει ο επόμενος όρος
-        if i + 1 >= len(terms):
-            print(f"Λάθος: Λείπει όρος μετά τον τελεστή '{operator}'")
-            break
         
         next_term = terms[i + 1]
         next_docs = set(inverted_index.get(next_term, []))  # Έγγραφα για τον επόμενο όρο
@@ -34,12 +32,11 @@ def boolean_search(query, inverted_index):
         elif operator == "not":
             result_set = result_set.difference(next_docs)
         else:
-            print(f"Λάθος: Άγνωστος τελεστής '{operator}'")
-            break
+            return None, f"Λάθος: Άγνωστος τελεστής '{operator}'."
         
         i += 2  # Επόμενος τελεστής ή όρος
     
-    return result_set
+    return result_set, None  # Επιστροφή αποτελεσμάτων και μηνύματος λάθους
 
 # main Συνάρτηση
 def main():
@@ -51,7 +48,7 @@ def main():
     print("Πληκτρολογήστε το ερώτημά σας χρησιμοποιώντας Boolean τελεστές (AND, OR, NOT) ή 'exit' για έξοδο.")
     
     while True:
-        # Εισαγωγή ερωτήμ,ατος από τον χρήστη
+        # Εισαγωγή ερωτήματος από τον χρήστη
         query = input("\nΕρώτημα: ").strip()
         
         # Έξοδος αν ο χρήστης πληκτρολογήσει "exit"
@@ -60,10 +57,12 @@ def main():
             break
         
         # Εκτέλεση Boolean Search
-        results = boolean_search(query, inverted_index)
+        results, error = boolean_search(query, inverted_index)
         
-        # Εμφάνιση αποτελεσμάτων
-        if results:
+        # Εμφάνιση αποτελεσμάτων ή μηνύματος λάθους
+        if error:
+            print(error)
+        elif results:
             print(f"Αποτελέσματα για το ερώτημα '{query}': {results}")
         else:
             print(f"Δεν βρέθηκαν αποτελέσματα για το ερώτημα '{query}'.")

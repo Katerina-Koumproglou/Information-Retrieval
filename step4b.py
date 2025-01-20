@@ -8,7 +8,7 @@ import numpy as np
 def load_documents(filepath):
     with open(filepath, "r", encoding="utf-8") as json_file:
         data = json.load(json_file)
-        # Αν το JSON περιέχει λίστα, επιστρέφουμε τα περιεχόμενα του πεδίου "content"
+        # Αν το JSON περιέχει λίστα, επιστρέφου με τα περιεχόμενα του πεδίου "content"
         if isinstance(data, list):
             return [doc["content"] for doc in data if "content" in doc]
         # Αν το JSON περιέχει λεξικό (π.χ. το ανεστραμμένο ευρετήριο), επιστρέφουμε το λεξικό
